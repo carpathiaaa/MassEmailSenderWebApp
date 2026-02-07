@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Bulk Email Preview</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; padding: 40px">
+    <h2>Bulk Email Preview</h2>
+
+    <p><strong>Total recipients:</strong> {{ count }}</p>
+
+    {% if sample %}
+    <h3>Sample Recipient</h3>
+    <p>
+      Name: {{ sample.name }} <br />
+      Email: {{ sample.email }}
+    </p>
+
+    <iframe
+      src="/preview"
+      style="width: 100%; height: 600px; border: 1px solid #ccc"
+    ></iframe>
+    {% else %}
+    <p>No valid recipients found.</p>
+    {% endif %}
+
+    <form method="post" action="/confirm-send">
+      <button type="submit" style="padding: 12px 20px; font-size: 16px">
+        Confirm & Send Emails
+      </button>
+    </form>
+  </body>
+</html>

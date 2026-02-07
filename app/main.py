@@ -1,18 +1,26 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from app.emailer.send_email import send_invitation_email
+from fastapi import FastAPI
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+
+from app.db.database import init_db
+from app.routes.logs import router as logs_router
+from app.routes.bulk import router as bulk_router
+
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    init_db()
+    yield
+
+app = FastAPI(lifespan=lifespan)
+
+app.include_router(logs_router)
+app.include_router(bulk_router)
+
 
 @app.get("/")
 def root():
     return {"status" : "ok"}
 
-@app.get("/send-test-email")
-def send_test_email():
-    send_invitation_email(
-        to_email="assasinboyugly@gmail.com",
-        recipient_name="Juan Dela Cruz"
-    )
-    return {"status": "email sent"}
