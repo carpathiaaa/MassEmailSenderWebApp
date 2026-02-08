@@ -1,11 +1,8 @@
 import smtplib
 from email.message import EmailMessage
-from email.utils import make_msgid
 from pathlib import Path
-from typing import cast
-
-from jinja2 import Environment, FileSystemLoader
 from dotenv import load_dotenv
+from jinja2 import Environment, FileSystemLoader
 import os
 
 
@@ -13,6 +10,7 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# === SMTP CONFIG ===
 SMTP_HOST_RAW = os.getenv("SMTP_HOST")
 SMTP_USER_RAW = os.getenv("SMTP_USER")
 SMTP_PASSWORD_RAW = os.getenv("SMTP_PASSWORD")
@@ -31,58 +29,64 @@ SMTP_PASSWORD: str = SMTP_PASSWORD_RAW
 EMAIL_FROM: str = EMAIL_FROM_RAW
 SMTP_PORT: int = int(SMTP_PORT_RAW)
 
+# === JINJA ENV (shared) ===
+env = Environment(
+    loader=FileSystemLoader(str(BASE_DIR / "templates")),
+    autoescape=True,
+)
 
 
-def send_invitation_email(
-        to_email: str,
-        recipient_name: str,
+def send_email(
+    *,
+    to_email: str,
+    recipient_name: str,
+    template_file: str,
+    subject: str,
 ):
-    env = Environment(
-        loader=FileSystemLoader(str(BASE_DIR / "templates")),
-        autoescape=True
-    )
+    """
+    Sends an HTML email using the given Jinja template file.
+    CID images are attached for email-client rendering.
+    """
 
-    template = env.get_template("ga_invitation_email.html")
+    # --- Render template ---
+    template = env.get_template(template_file)
 
     html_content = template.render(
         recipient_name=recipient_name,
-        sender_name="Charles Chang-il N. Jung"
+        preview_mode=False,  # IMPORTANT: email mode
     )
 
+    # --- Build message ---
     msg = EmailMessage()
-    msg["Subject"] = "Invitation to Partner – CpE General Assembly 2026"
+    msg["Subject"] = subject
     msg["From"] = EMAIL_FROM
     msg["To"] = to_email
 
-    msg.set_content(
-        "This email requires an HTML-capable email client."
-    )
+    msg.set_content("This email requires an HTML-capable email client.")
+    msg.add_alternative(html_content, subtype="html")
 
-
+    # --- Attach CID images ---
     images = {
-        "header_image" : BASE_DIR / "assets" / "BigHeader.png",
-        "footer_image" : BASE_DIR / "assets" / "ICPEPLogo.png"
+        "header_image": BASE_DIR / "assets" / "BigHeader.png",
+        "footer_image": BASE_DIR / "assets" / "ICPEPLogo.png",
     }
 
-    html_msg = EmailMessage()
-    html_msg.set_content(html_content, subtype="html")
+    html_part = msg.get_body(preferencelist=("html",))
+    if html_part is None:
+        raise RuntimeError("HTML body was not created")
 
-    # Attach images as RELATED to the HTML
     for cid, path in images.items():
         with open(path, "rb") as img:
-            html_msg.add_related(
+            html_part.add_related(
                 img.read(),
                 maintype="image",
                 subtype=path.suffix.lstrip("."),
                 cid=f"<{cid}>",
-                filename=path.name
+                filename=path.name,
             )
 
-    # Attach the HTML+images as an alternative
-    msg.make_alternative()
-    msg.attach(html_msg)
-
+    # --- Send ---
     with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
         server.starttls()
         server.login(SMTP_USER, SMTP_PASSWORD)
-        server.send_message(msg)       
+        server.send_message(msg)

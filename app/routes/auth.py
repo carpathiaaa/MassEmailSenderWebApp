@@ -1,22 +1,23 @@
 from fastapi import APIRouter, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.templating import Jinja2Templates
 import os
 
 from app.auth.security import verify_password
 
 router = APIRouter()
+templates = Jinja2Templates(directory="app/templates")
 
 
 @router.get("/login", response_class=HTMLResponse)
-def login_form():
-    return """
-    <h2>Login</h2>
-    <form method="post">
-      <input name="username" placeholder="Username" required />
-      <input name="password" type="password" placeholder="Password" required />
-      <button type="submit">Login</button>
-    </form>
-    """
+def login_form(request: Request):
+    return templates.TemplateResponse(
+        "login.html",
+        {
+            "request": request,
+            "error": None,
+        },
+    )
 
 @router.post("/login")
 def login(request: Request, username: str = Form(...), password: str = Form(...)):
@@ -31,7 +32,13 @@ def login(request: Request, username: str = Form(...), password: str = Form(...)
         request.session["user"] = username
         return RedirectResponse("/", status_code=302)
 
-    return HTMLResponse("Invalid credentials", status_code=302)
+    return templates.TemplateResponse(
+        "login.html",
+        {
+            "request": request,
+            "error": "Invalid username or password",
+        },
+    )
 
 @router.post("/logout")
 def logout(request: Request):

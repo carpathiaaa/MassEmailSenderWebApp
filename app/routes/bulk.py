@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Request, BackgroundTasks
+from fastapi import APIRouter, UploadFile, File, Request, BackgroundTasks, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi import Depends
@@ -7,8 +7,11 @@ import csv
 from io import TextIOWrapper
 from typing import List, Dict
 
+
 from app.services.bulk_sender import send_bulk_emails_task
 from app.auth.dependencies import require_login
+from app.emailer.templates import EMAIL_TEMPLATES
+
 
 
 router = APIRouter()
@@ -19,7 +22,11 @@ PENDING_RECIPIENTS: List[Dict[str, str]] = []
 
 
 @router.post("/preview-bulk", response_class=HTMLResponse, dependencies=[Depends(require_login)])
-def preview_bulk(request: Request, file: UploadFile = File(...)):
+def preview_bulk(request: Request, file: UploadFile = File(...), template: str = Form(...)):
+    if template not in EMAIL_TEMPLATES:
+        raise ValueError("Invalid template selected")
+
+    request.session["selected_template"] = template
     global PENDING_RECIPIENTS
     PENDING_RECIPIENTS = []
 
@@ -47,18 +54,33 @@ def preview_bulk(request: Request, file: UploadFile = File(...)):
     )
 
 
-@router.post("/confirm-send", dependencies=[Depends(require_login)])
-def confirm_send(background_tasks: BackgroundTasks):
+@router.post("/confirm-send", response_class=HTMLResponse, dependencies=[Depends(require_login)])
+def confirm_send(request: Request, background_tasks: BackgroundTasks):
     if not PENDING_RECIPIENTS:
-        return {"status": "no recipients to send"}
+        return templates.TemplateResponse(
+            "send_confirmation.html",
+            {
+                "request": request,
+                "count": 0,
+            },
+        )
 
+    template_key = request.session.get("selected_template")
+
+    if not template_key:
+        return HTMLResponse("No template selected", status_code=400)
     # IMPORTANT: copy list so background task is isolated
     background_tasks.add_task(
         send_bulk_emails_task,
-        PENDING_RECIPIENTS.copy()
+        PENDING_RECIPIENTS.copy(),
+        template_key,
     )
 
-    return {
-        "status": "bulk email job started",
-        "recipient_count": len(PENDING_RECIPIENTS)
-    }
+
+    return templates.TemplateResponse(
+        "send_confirmation.html",
+        {
+            "request": request,
+            "count": len(PENDING_RECIPIENTS),
+        },
+    )

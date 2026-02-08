@@ -1,0 +1,200 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Following Up | ICpEP.SE PLM</title>
+    <style>
+      /* Email Client Reset */
+      body,
+      table,
+      td,
+      a {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+      }
+      table,
+      td {
+        mso-table-lspace: 0pt;
+        mso-table-rspace: 0pt;
+      }
+      img {
+        -ms-interpolation-mode: bicubic;
+        border: 0;
+        height: auto;
+        line-height: 100%;
+        outline: none;
+        text-decoration: none;
+      }
+
+      /* Theme Styles */
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #0a192f; /* Deep Navy Background */
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        color: #ccd6f6;
+      }
+
+      .email-wrapper {
+        width: 100%;
+        background-color: #0a192f;
+        padding: 40px 0;
+      }
+
+      .email-card {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #112240; /* Card Navy */
+        border-radius: 8px;
+        overflow: hidden;
+        border: 1px solid #233554;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .header {
+        padding: 30px;
+        text-align: left;
+        border-bottom: 1px solid #233554;
+      }
+
+      .brand-text {
+        color: #ffffff;
+        font-size: 20px;
+        font-weight: bold;
+        letter-spacing: 1px;
+      }
+
+      .brand-highlight {
+        color: #ffd700; /* Gold */
+      }
+
+      .content {
+        padding: 40px 30px;
+        font-size: 16px;
+        line-height: 1.6;
+        color: #ccd6f6;
+      }
+
+      .highlight-box {
+        background-color: rgba(255, 215, 0, 0.05); /* Faint Gold */
+        border-left: 3px solid #ffd700;
+        padding: 15px;
+        margin: 20px 0;
+        font-style: italic;
+        color: #8892b0;
+        font-size: 14px;
+      }
+
+      .btn {
+        display: inline-block;
+        background-color: transparent;
+        color: #ffd700;
+        border: 2px solid #ffd700;
+        padding: 12px 25px;
+        text-decoration: none;
+        font-weight: 600;
+        border-radius: 5px;
+        margin-top: 20px;
+        transition: background 0.3s;
+      }
+
+      /* Email clients often strip hover states, but good to have for web view */
+      .btn:hover {
+        background-color: #ffd700;
+        color: #0a192f;
+      }
+
+      .footer {
+        background-color: #0a192f;
+        padding: 30px;
+        text-align: center;
+        font-size: 12px;
+        color: #8892b0;
+        border-top: 1px solid #233554;
+      }
+
+      .footer a {
+        color: #8892b0;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <table
+      class="email-wrapper"
+      role="presentation"
+      cellspacing="0"
+      cellpadding="0"
+      border="0"
+      width="100%"
+    >
+      <tr>
+        <td align="center">
+          <div class="email-card">
+            <div class="header">
+              <div class="brand-text">
+                ICpEP<span class="brand-highlight">.SE</span> PLM
+              </div>
+            </div>
+
+            <div class="content">
+              <p style="margin-top: 0">Hi <strong>{{ name }}</strong>,</p>
+
+              <p>I hope you’re having a productive week.</p>
+
+              <p>
+                I’m writing to quickly follow up on my previous email regarding
+                a potential partnership with <strong>ICpEP.SE PLM</strong> for
+                our upcoming academic term.
+              </p>
+
+              <div class="highlight-box">
+                "Innovation through Collaboration: Bridging the gap between
+                students and industry leaders."
+              </div>
+
+              <p>
+                We believe your organization aligns perfectly with our vision,
+                and we would love to discuss how we can create mutual value
+                together. I know inboxes can get busy, so I wanted to float this
+                to the top of your list.
+              </p>
+
+              <p>
+                If you have a moment, I’d be happy to jump on a brief call to
+                answer any questions you might have about the proposal.
+              </p>
+
+              <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td>
+                    <a href="#" class="btn">View Proposal Again</a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin-top: 30px; font-size: 14px; color: #8892b0">
+                Best regards,<br />
+                <strong style="color: #ffffff"
+                  >External Affairs Committee</strong
+                ><br />
+                ICpEP.SE PLM Chapter
+              </p>
+            </div>
+
+            <div class="footer">
+              <p>
+                This email was sent to {{ email }}.<br />
+                If you did not expect this email, please
+                <a href="#">unsubscribe here</a>.
+              </p>
+              <p>&copy; 2026 ICpEP.SE PLM Chapter</p>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

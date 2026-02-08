@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ICpEP.SE PLM | Admin Login</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --bg-color: #0a192f; /* Deep Navy */
+        --card-color: #112240; /* Lighter Navy */
+        --input-bg: #233554; /* Input Field Background */
+        --primary-yellow: #ffd700; /* ICpEP Gold */
+        --hover-yellow: #e6c200;
+        --text-light: #ccd6f6;
+        --text-muted: #8892b0;
+        --danger: #ff5f57;
+        --danger-bg: rgba(255, 95, 87, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-light);
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        background-image: radial-gradient(#1d3b66 1px, transparent 1px);
+        background-size: 40px 40px;
+      }
+
+      .login-card {
+        background-color: var(--card-color);
+        padding: 50px 40px;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 215, 0, 0.1);
+        position: relative;
+      }
+
+      /* Logo Area */
+      .brand-icon {
+        font-size: 48px;
+        color: var(--primary-yellow);
+        margin-bottom: 15px;
+        display: inline-block;
+      }
+
+      h2 {
+        color: var(--text-light);
+        font-weight: 600;
+        font-size: 24px;
+        margin-bottom: 5px;
+      }
+
+      .subtitle {
+        color: var(--text-muted);
+        font-size: 14px;
+        margin-bottom: 30px;
+      }
+
+      /* Input Fields */
+      .input-group {
+        position: relative;
+        margin-bottom: 20px;
+        text-align: left;
+      }
+
+      .input-group i {
+        position: absolute;
+        left: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 16px;
+        transition: 0.3s;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px 14px 14px 45px; /* Left padding for icon */
+        background-color: var(--input-bg);
+        border: 1px solid transparent;
+        border-radius: 8px;
+        color: var(--text-light);
+        font-family: "Poppins", sans-serif;
+        font-size: 14px;
+        outline: none;
+        transition: 0.3s;
+      }
+
+      input::placeholder {
+        color: var(--text-muted);
+        opacity: 0.7;
+      }
+
+      input:focus {
+        border-color: var(--primary-yellow);
+        box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.1);
+      }
+
+      input:focus + i {
+        color: var(--primary-yellow);
+      }
+
+      /* Button */
+      .btn-login {
+        width: 100%;
+        padding: 14px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        font-size: 16px;
+        cursor: pointer;
+        background-color: var(--primary-yellow);
+        color: var(--bg-color);
+        transition:
+          transform 0.2s,
+          background-color 0.2s;
+        margin-top: 10px;
+        font-family: "Poppins", sans-serif;
+      }
+
+      .btn-login:hover {
+        background-color: var(--hover-yellow);
+        transform: translateY(-2px);
+      }
+
+      /* Error Alert */
+      .alert-box {
+        background-color: var(--danger-bg);
+        border: 1px solid var(--danger);
+        color: var(--danger);
+        padding: 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        animation: shake 0.4s ease-in-out;
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-5px);
+        }
+        75% {
+          transform: translateX(5px);
+        }
+      }
+
+      .footer-text {
+        margin-top: 30px;
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-card">
+      <div class="brand-icon">
+        <i class="fa-solid fa-user-shield"></i>
+      </div>
+      <h2>Admin Access</h2>
+      <p class="subtitle">Please sign in to continue</p>
+
+      {% if error %}
+      <div class="alert-box">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span>{{ error }}</span>
+      </div>
+      {% endif %}
+
+      <form method="post">
+        <div class="input-group">
+          <i class="fa-solid fa-user"></i>
+          <input
+            name="username"
+            type="text"
+            placeholder="Username"
+            required
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="input-group">
+          <i class="fa-solid fa-lock"></i>
+          <input
+            name="password"
+            type="password"
+            placeholder="Password"
+            required
+          />
+        </div>
+
+        <button type="submit" class="btn-login">
+          Sign In
+          <i
+            class="fa-solid fa-arrow-right-to-bracket"
+            style="margin-left: 8px"
+          ></i>
+        </button>
+      </form>
+
+      <div class="footer-text">&copy; 2026 ICpEP.SE PLM Chapter</div>
+    </div>
+  </body>
+</html>

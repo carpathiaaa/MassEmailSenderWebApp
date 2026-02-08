@@ -1,14 +1,20 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request, Depends
 from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 
 from app.db.database import get_connection
 from app.auth.dependencies import require_login
 from fastapi import Depends
 
+from datetime import datetime
+import pytz
+
 router = APIRouter()
+templates = Jinja2Templates(directory="app/templates")
+
 
 @router.get("/logs", response_class=HTMLResponse, dependencies=[Depends(require_login)])
-def view_logs():
+def view_logs(request: Request):
     with get_connection() as conn:
         rows = conn.execute(
             """
@@ -19,19 +25,30 @@ def view_logs():
             """
         ).fetchall()
 
-    html = "<h2>Email Logs</h2><table border='1' cellpadding='6'>"
-    html += "<tr><th>Email</th><th>Name</th><th>Status</th><th>Error</th><th>Time</th></tr>"
+    utc = pytz.utc
+    manila = pytz.timezone("Asia/Manila")
+
+    logs = []
 
     for email, name, status, error, created_at in rows:
-        html += f"""
-        <tr>
-            <td>{email}</td>
-            <td>{name or ''}</td>
-            <td>{status}</td>
-            <td>{error or ''}</td>
-            <td>{created_at}</td>
-        </tr>
-        """
+        # created_at is an ISO string
+        utc_dt = utc.localize(datetime.fromisoformat(created_at))
+        local_dt = utc_dt.astimezone(manila)
 
-    html += "</table>"
-    return html
+        logs.append(
+            {
+                "email": email,
+                "name": name,
+                "status": status,
+                "error": error,
+                "created_at": local_dt.strftime("%Y-%m-%d %H:%M:%S"),
+            }
+        )
+
+    return templates.TemplateResponse(
+        "logs.html",
+        {
+            "request": request,
+            "logs": logs,
+        },
+    )

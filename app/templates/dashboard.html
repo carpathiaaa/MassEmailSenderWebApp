@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ICpEP.SE PLM | Mass Email Dashboard</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --bg-color: #0a192f; /* Deep Navy */
+        --card-color: #112240; /* Lighter Navy */
+        --input-bg: #233554; /* Input Background */
+        --primary-yellow: #ffd700; /* ICpEP Gold */
+        --hover-yellow: #e6c200;
+        --text-light: #ccd6f6;
+        --text-muted: #8892b0;
+        --danger: #ff5f57;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-light);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        background-image: radial-gradient(#1d3b66 1px, transparent 1px);
+        background-size: 40px 40px;
+      }
+
+      .container {
+        background-color: var(--card-color);
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        width: 100%;
+        max-width: 500px;
+        text-align: center;
+        border: 1px solid rgba(255, 215, 0, 0.1);
+      }
+
+      /* Header */
+      .header {
+        margin-bottom: 30px;
+      }
+      .header h2 {
+        font-weight: 600;
+        font-size: 24px;
+        color: var(--primary-yellow);
+        margin-bottom: 5px;
+        text-transform: uppercase;
+      }
+      .header p {
+        color: var(--text-muted);
+        font-size: 14px;
+      }
+
+      .status-badge {
+        display: inline-block;
+        background: rgba(100, 255, 218, 0.1);
+        color: #64ffda;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        margin-top: 10px;
+        border: 1px solid #64ffda;
+      }
+
+      /* Form Styling */
+      .upload-section {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .form-group {
+        text-align: left;
+      }
+
+      .form-label {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-bottom: 8px;
+        display: block;
+        font-weight: 500;
+      }
+
+      /* Custom Select Style */
+      select {
+        width: 100%;
+        padding: 12px;
+        background-color: var(--input-bg);
+        color: var(--text-light);
+        border: 1px solid var(--text-muted);
+        border-radius: 8px;
+        font-family: "Poppins", sans-serif;
+        font-size: 14px;
+        cursor: pointer;
+        outline: none;
+        transition: 0.3s;
+      }
+
+      select:focus {
+        border-color: var(--primary-yellow);
+        box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.1);
+      }
+
+      /* File Input Style */
+      .file-upload-box {
+        border: 2px dashed var(--text-muted);
+        border-radius: 10px;
+        padding: 20px;
+        transition: 0.3s;
+        text-align: center;
+      }
+      .file-upload-box:hover {
+        border-color: var(--primary-yellow);
+        background: rgba(255, 215, 0, 0.05);
+      }
+
+      input[type="file"] {
+        width: 100%;
+        color: var(--text-muted);
+        font-size: 13px;
+      }
+
+      input[type="file"]::file-selector-button {
+        background-color: var(--bg-color);
+        color: var(--primary-yellow);
+        border: 1px solid var(--primary-yellow);
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 10px;
+        transition: 0.3s;
+      }
+      input[type="file"]::file-selector-button:hover {
+        background-color: var(--primary-yellow);
+        color: var(--bg-color);
+      }
+
+      /* Buttons */
+      .btn {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        font-family: "Poppins", sans-serif;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-yellow);
+        color: var(--bg-color);
+        box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+      }
+      .btn-primary:hover {
+        background-color: var(--hover-yellow);
+        transform: translateY(-2px);
+      }
+
+      .btn-secondary {
+        background-color: transparent;
+        border: 1px solid var(--text-muted);
+        color: var(--text-muted);
+      }
+      .btn-secondary:hover {
+        border-color: var(--text-light);
+        color: var(--text-light);
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      .btn-logout {
+        background: none;
+        color: var(--danger);
+        font-size: 14px;
+        margin-top: 20px;
+        cursor: pointer;
+      }
+      .btn-logout:hover {
+        text-decoration: underline;
+      }
+
+      .footer {
+        margin-top: 30px;
+        font-size: 12px;
+        color: var(--text-muted);
+        opacity: 0.6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div
+          style="
+            font-size: 40px;
+            color: var(--primary-yellow);
+            margin-bottom: 15px;
+          "
+        >
+          <i class="fa-solid fa-microchip"></i>
+        </div>
+        <h2>ICpEP.SE PLM</h2>
+        <p>Mass Email Sender Dashboard</p>
+        <span class="status-badge"
+          ><i class="fa-solid fa-check-circle"></i> Logged In</span
+        >
+      </div>
+
+      <form action="/preview-bulk" method="post" enctype="multipart/form-data">
+        <div class="upload-section">
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fa-solid fa-layer-group"></i> Email Template
+            </label>
+            <select name="template" required>
+              {% for key, tpl in templates.items() %}
+              <option value="{{ key }}">{{ tpl.label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">
+              <i class="fa-solid fa-file-csv"></i> Recipient List (CSV)
+            </label>
+            <div class="file-upload-box">
+              <input type="file" name="file" required accept=".csv" />
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-rocket"></i> Preview & Send
+          </button>
+        </div>
+      </form>
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <a href="/logs" class="btn btn-secondary">
+          <i class="fa-solid fa-list-ul"></i> View Email Logs
+        </a>
+
+        <form action="/logout" method="post">
+          <button type="submit" class="btn-logout">
+            <i class="fa-solid fa-right-from-bracket"></i> Logout
+          </button>
+        </form>
+      </div>
+
+      <div class="footer">&copy; 2026 ICpEP.SE PLM Chapter</div>
+    </div>
+  </body>
+</html>
