@@ -2,10 +2,12 @@ from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
 
 from app.db.database import get_connection
+from app.auth.dependencies import require_login
+from fastapi import Depends
 
 router = APIRouter()
 
-@router.get("/logs", response_class=HTMLResponse)
+@router.get("/logs", response_class=HTMLResponse, dependencies=[Depends(require_login)])
 def view_logs():
     with get_connection() as conn:
         rows = conn.execute(

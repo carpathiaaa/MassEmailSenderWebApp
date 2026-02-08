@@ -1,12 +1,15 @@
 from fastapi import APIRouter, UploadFile, File, Request, BackgroundTasks
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from fastapi import Depends
 
 import csv
 from io import TextIOWrapper
 from typing import List, Dict
 
 from app.services.bulk_sender import send_bulk_emails_task
+from app.auth.dependencies import require_login
+
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
@@ -15,7 +18,7 @@ templates = Jinja2Templates(directory="app/templates")
 PENDING_RECIPIENTS: List[Dict[str, str]] = []
 
 
-@router.post("/preview-bulk", response_class=HTMLResponse)
+@router.post("/preview-bulk", response_class=HTMLResponse, dependencies=[Depends(require_login)])
 def preview_bulk(request: Request, file: UploadFile = File(...)):
     global PENDING_RECIPIENTS
     PENDING_RECIPIENTS = []
@@ -44,7 +47,7 @@ def preview_bulk(request: Request, file: UploadFile = File(...)):
     )
 
 
-@router.post("/confirm-send")
+@router.post("/confirm-send", dependencies=[Depends(require_login)])
 def confirm_send(background_tasks: BackgroundTasks):
     if not PENDING_RECIPIENTS:
         return {"status": "no recipients to send"}
