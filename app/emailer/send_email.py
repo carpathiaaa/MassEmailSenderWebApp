@@ -42,6 +42,8 @@ def send_email(
     recipient_name: str,
     template_file: str,
     subject: str,
+    sender_name: str,
+    position: str
 ):
     """
     Sends an HTML email using the given Jinja template file.
@@ -54,12 +56,14 @@ def send_email(
     html_content = template.render(
         recipient_name=recipient_name,
         preview_mode=False,  # IMPORTANT: email mode
+        sender_name=sender_name,
+        position=position
     )
 
     # --- Build message ---
     msg = EmailMessage()
     msg["Subject"] = subject
-    msg["From"] = EMAIL_FROM
+    msg["From"] = f"{sender_name} <{EMAIL_FROM}>"
     msg["To"] = to_email
 
     msg.set_content("This email requires an HTML-capable email client.")

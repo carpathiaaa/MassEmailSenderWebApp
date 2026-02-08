@@ -22,11 +22,17 @@ PENDING_RECIPIENTS: List[Dict[str, str]] = []
 
 
 @router.post("/preview-bulk", response_class=HTMLResponse, dependencies=[Depends(require_login)])
-def preview_bulk(request: Request, file: UploadFile = File(...), template: str = Form(...)):
+def preview_bulk(request: Request, file: UploadFile = File(...), template: str = Form(...), subject: str = Form(...), sender_name: str = Form(...), position: str = Form(...)):
     if template not in EMAIL_TEMPLATES:
         raise ValueError("Invalid template selected")
 
-    request.session["selected_template"] = template
+    request.session["campaign"] = {
+    "template": template,
+    "subject": subject,
+    "sender_name": sender_name,
+    "position": position,
+}
+
     global PENDING_RECIPIENTS
     PENDING_RECIPIENTS = []
 
@@ -65,15 +71,15 @@ def confirm_send(request: Request, background_tasks: BackgroundTasks):
             },
         )
 
-    template_key = request.session.get("selected_template")
+    campaign = request.session.get("campaign")
 
-    if not template_key:
-        return HTMLResponse("No template selected", status_code=400)
-    # IMPORTANT: copy list so background task is isolated
+    if not campaign:
+        return HTMLResponse("No campaign data found", status_code=400)
+
     background_tasks.add_task(
         send_bulk_emails_task,
         PENDING_RECIPIENTS.copy(),
-        template_key,
+        campaign,
     )
 
 

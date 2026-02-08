@@ -8,7 +8,7 @@ from app.emailer.templates import EMAIL_TEMPLATES
 
 
 router = APIRouter()
-templates = Jinja2Templates(directory="app/templates/emails")
+templates = Jinja2Templates(directory="app/templates")
 
 
 @router.get(
@@ -22,23 +22,33 @@ def preview_email(request: Request):
     using sample data.
     """
 
-    template_key = request.session.get("selected_template")
+    campaign = request.session.get("campaign")
+
+    if not campaign:
+        return HTMLResponse(
+            "No campaign data found. Please go back and start again.",
+            status_code=400,
+        )
+
+    template_key = campaign.get("template")
 
     if not template_key or template_key not in EMAIL_TEMPLATES:
         return HTMLResponse(
-            "No template selected. Please go back and upload a CSV.",
+            "Invalid email template selected.",
             status_code=400,
         )
 
     template_info = EMAIL_TEMPLATES[template_key]
+
 
     return templates.TemplateResponse(
         template_info["file"],
         {
             "request": request,
             "recipient_name": "Sample Recipient",
+            "sender_name": campaign.get("sender_name"),
+            "position": campaign.get("position"),
             "preview_mode": True,
-            
         },
     )
 
